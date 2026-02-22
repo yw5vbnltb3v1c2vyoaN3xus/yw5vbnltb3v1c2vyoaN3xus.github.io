@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS | Secure Terminal</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0c;
+            --neon-accent: #00ffcc;
+            --error-red: #ff3333;
+            --glass-bg: rgba(10, 10, 12, 0.7);
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            background-image: radial-gradient(circle at center, #1a1a24 0%, #0a0a0c 100%);
+        }
+
+        .terminal-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            padding: 40px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--neon-accent);
+            text-shadow: 0 0 10px var(--neon-accent);
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .warning {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            background: transparent;
+            border: 1px solid var(--neon-accent);
+            color: var(--neon-accent);
+            font-size: 1rem;
+            border-radius: 4px;
+            outline: none;
+            margin-bottom: 20px;
+            text-align: center;
+            transition: box-shadow 0.3s ease;
+        }
+
+        input:focus {
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--neon-accent);
+            color: var(--bg-color);
+            border: none;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        button:hover {
+            background: #fff;
+            box-shadow: 0 0 20px #fff;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            min-height: 20px;
+            color: var(--error-red);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="terminal-container">
+        <h1>NEXUS</h1>
+        <p class="warning">This is NEXUS — a highly private and encrypted communication system. Unauthorized access is strictly prohibited.</p>
+        
+        <input type="password" id="masterKey" placeholder="ENTER MASTER KEY SEQUENCE" autocomplete="off">
+        <button onclick="authenticate()">Initialize</button>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        async function authenticate() {
+            const keyInput = document.getElementById('masterKey').value;
+            const messageDiv = document.getElementById('message');
+            
+            messageDiv.style.color = "#00ffcc";
+            messageDiv.innerText = "Authenticating sequence...";
+
+            try {
+                const response = await fetch('/api/auth/gate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key: keyInput })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    messageDiv.innerText = "Access Granted. Rerouting...";
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 1000);
+                } else {
+                    messageDiv.style.color = "#ff3333";
+                    messageDiv.innerText = data.error || "Authentication Failed.";
+                }
+            } catch (err) {
+                messageDiv.style.color = "#ff3333";
+                messageDiv.innerText = "Connection to main server lost.";
+            }
+        }
+    </script>
+</body>
+</html>
