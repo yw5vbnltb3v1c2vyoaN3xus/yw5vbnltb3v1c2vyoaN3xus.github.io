@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NEXUS | Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body { display: block; overflow: hidden; }
+        .nexus-wrapper { display: flex; height: 100vh; padding: 20px; gap: 20px; }
+        
+        /* Sidebar - Friend System */
+        .sidebar { 
+            width: 300px; background: var(--glass); border: 1px solid var(--border); 
+            border-radius: 12px; display: flex; flex-direction: column;
+        }
+        .friend-list { flex-grow: 1; padding: 10px; overflow-y: auto; }
+        .friend-item { padding: 10px; border-bottom: 1px solid rgba(0, 255, 204, 0.1); display: flex; align-items: center; justify-content: space-between; }
+        .status-dot { width: 8px; height: 8px; background: var(--nexus-cyan); border-radius: 50%; box-shadow: 0 0 5px var(--nexus-cyan); }
+
+        /* Main Chat Area */
+        .chat-container { 
+            flex-grow: 1; background: var(--glass); border: 1px solid var(--border); 
+            border-radius: 12px; display: flex; flex-direction: column;
+        }
+        .chat-header { padding: 20px; border-bottom: 1px solid var(--border); font-weight: bold; color: var(--nexus-cyan); }
+        .chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        
+        .message { max-width: 70%; padding: 10px 15px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); }
+        .message.mine { align-self: flex-end; border: 1px solid var(--border); background: rgba(0, 255, 204, 0.05); }
+
+        .chat-input-area { padding: 20px; display: flex; gap: 10px; border-top: 1px solid var(--border); }
+        input#msg-input { margin-bottom: 0; }
+        button#send-btn { width: 100px; }
+    </style>
+</head>
+<body>
+    <div class="nexus-wrapper">
+        <aside class="sidebar">
+            <div class="chat-header">OPERATIVES</div>
+            <div class="friend-list" id="friend-list">
+                <div class="friend-item"><span>System_Admin</span> <div class="status-dot"></div></div>
+            </div>
+        </aside>
+
+        <main class="chat-container">
+            <div class="chat-header">NEXUS GLOBAL TERMINAL</div>
+            <div class="chat-messages" id="chat-box"></div>
+            <div id="typing-indicator" style="padding: 0 20px; font-size: 0.8rem; color: #888; height: 20px;"></div>
+            <div class="chat-input-area">
+                <input type="text" id="msg-input" placeholder="Enter encrypted transmission...">
+                <button id="send-btn" onclick="sendMessage()">SEND</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const socket = io();
+        const username = localStorage.getItem('nexus_user') || 'Agent_' + Math.floor(Math.random()*1000);
+
+        socket.emit('join_nexus', { username });
+
+        function sendMessage() {
+            const input = document.getElementById('msg-input');
+            if(!input.value) return;
+
+            socket.emit('send_message', {
+                sender: username,
+                text: input.value,
+                type: 'global',
+                timestamp: new Date().toLocaleTimeString()
+            });
+            input.value = '';
+        }
+
+        socket.on('receive_message', (data) => {
+            const chatBox = document.getElementById('chat-box');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${data.sender === username ? 'mine' : ''}`;
+            msgDiv.innerHTML = `<small style="color:var(--nexus-cyan)">${data.sender}</small><br>${data.text}`;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    </script>
+</body>
+</html>

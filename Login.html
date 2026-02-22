@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NEXUS | Secure Login</title>
+    <link rel="stylesheet" href="style.css"> <style>
+        /* Cyber-intelligence login styles */
+        body { background: #0a0a0c; color: #fff; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .login-box { 
+            background: rgba(20, 20, 25, 0.8); 
+            padding: 40px; 
+            border: 1px solid #00ffcc; 
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
+            border-radius: 5px;
+            width: 350px;
+        }
+        input { 
+            width: 100%; padding: 10px; margin: 10px 0; 
+            background: #1a1a1e; border: 1px solid #333; color: #00ffcc; 
+        }
+        button { 
+            width: 100%; padding: 10px; background: #00ffcc; 
+            color: #000; border: none; cursor: pointer; font-weight: bold; 
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h2 style="color: #00ffcc; text-align: center;">NEXUS ACCESS</h2>
+        <input type="text" id="user" placeholder="USERNAME">
+        <input type="password" id="pass" placeholder="PASSWORD">
+        <button onclick="login()">AUTHORIZE</button>
+        <p style="font-size: 0.8rem; margin-top: 15px;">New Agent? <a href="register.html" style="color: #00ffcc;">Register</a></p>
+    </div>
+</body>
+</html>

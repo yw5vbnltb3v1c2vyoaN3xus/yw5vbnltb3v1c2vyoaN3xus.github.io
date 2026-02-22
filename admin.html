@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NEXUS | Admin Core</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 90%; max-width: 1000px; }
+        .stat-card { background: var(--glass); border: 1px solid var(--nexus-cyan); padding: 20px; border-radius: 8px; }
+        .user-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid rgba(0,255,204,0.1); }
+    </style>
+</head>
+<body>
+    <div class="admin-grid">
+        <div class="stat-card">
+            <h2>BROADCAST COMMAND</h2>
+            <input type="text" id="bc-msg" placeholder="Message to all users...">
+            <button onclick="sendBroadcast()">EXECUTE BROADCAST</button>
+        </div>
+        
+        <div class="stat-card">
+            <h2>ACTIVE OPERATIVES</h2>
+            <div id="user-list">
+                <div class="user-row"><span>Agent_77</span> <button style="width:auto; padding:5px 10px; background:red;">BAN</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function sendBroadcast() {
+            const message = document.getElementById('bc-msg').value;
+            const token = localStorage.getItem('nexus_token');
+            
+            const res = await fetch('/api/admin/broadcast', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': token 
+                },
+                body: JSON.stringify({ message })
+            });
+            if(res.ok) alert("Global Transmission Successful.");
+        }
+    </script>
+</body>
+</html>

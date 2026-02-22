@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NEXUS | Create Identity</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="nexus-card">
+        <h2>NEXUS REGISTRY</h2>
+        <input type="text" id="reg-user" placeholder="USERNAME">
+        <input type="email" id="reg-email" placeholder="SECURE EMAIL">
+        <input type="password" id="reg-pass" placeholder="MASTER PASSWORD">
+        <p style="font-size: 0.7rem; color: #888; margin-bottom: 15px;">
+            *Req: 12+ chars, Upper/Lower, Digit, Symbol
+        </p>
+        <button onclick="register()">Initialize Account</button>
+        <p id="msg" style="margin-top:15px; text-align:center; font-size:0.9rem;"></p>
+    </div>
+
+    <script>
+        async function register() {
+            const username = document.getElementById('reg-user').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-pass').value;
+            const msg = document.getElementById('msg');
+
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, email, password })
+            });
+
+            const data = await response.json();
+            if (res.ok) {
+                msg.style.color = "#00ffcc";
+                msg.innerText = "Identity Verified. Redirecting to Login...";
+                setTimeout(() => window.location.href = "login.html", 2000);
+            } else {
+                msg.style.color = "#ff3333";
+                msg.innerText = data.error;
+            }
+        }
+    </script>
+</body>
+</html>
